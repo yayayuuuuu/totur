@@ -1,7 +1,7 @@
 const Footer = () => {
     return (
 
-        <footer className="bg-[#2B5659] w-full h-40 flex items-center justify-evenly">
+        <footer className="bg-[#2B5659] w-full h-40 flex items-center justify-evenly mt-10">
 
             <div className="footer-title">
                 <p className="text-[16px] sm:text-[16px] md:text-[24px] font-bold">Tutor Track</p>

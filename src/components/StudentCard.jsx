@@ -30,7 +30,7 @@ export default function StudentCard({ student }) {
         className="px-3 py-1 rounded transition-colors duration-200"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        onClick={() => navigate(`/edit-student/${student.id}`)}
+        onClick={() => navigate(`/students/${student.id}`)}
       >
         詳細檔案
       </button>
