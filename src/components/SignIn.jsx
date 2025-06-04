@@ -7,13 +7,12 @@ import { useNavigate } from "react-router-dom";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 模擬 Firebase auth 狀態載入
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigate("/home");
@@ -21,17 +20,11 @@ const SignIn = () => {
         setLoading(false);
       }
     });
-  
+
     return () => unsubscribe();
   }, [navigate]);
-  
+
   if (loading) return <div>Loading...</div>;
-
-
-
-
-
-  
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -56,13 +49,15 @@ const SignIn = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
-          type="password"
-          className="border rounded px-3 py-2"
-          placeholder="密碼"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+
+        {/* 密碼欄位 + 眼睛圖示 */}
+     <input
+            type="password"
+            className="border text-gray-900 rounded px-3 py-2 placeholder:text-gray-400"
+            placeholder="密碼"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
         <button type="submit" className="custom-button">登入</button>
 

@@ -38,19 +38,19 @@ function Header() {
             </Link>
           </>
         ) : (
-          <button
-            onClick={() => setShowProfile(true)}
-            className="border border-2 rounded-sm px-4 py-2 text-black"
-          >
-            會員中心
-          </button>
+        <button
+          onClick={() => setShowProfile(true)}
+          className="border border-2 rounded-sm px-4 py-2 text-black hover:!bg-[#FFFFD0] hover:!border-black"
+        >
+          會員中心
+        </button>
         )}
       </div>
 
       {/* 登入頁提醒 */}
       {isSigninPage && (
         <h2 className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold text-black">
-          請先登入！
+          
         </h2>
       )}
 

@@ -10,7 +10,7 @@ export default function StudentCard({ student }) {
     <div className="flex bg-white shadow p-4 rounded-md items-center justify-between">
       <div className="flex items-center space-x-4">
         <img
-          src={student.photoURL || 'https://via.placeholder.com/50'}
+          src={student.photoURL || "/images/stuphoto.png"}
           className="w-12 h-12 rounded-full"
           alt="avatar"
         />

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, storage, auth } from '../firebase';
-import { doc, addDoc, collection, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { v4 as uuidv4 } from 'uuid';
+import { db, auth } from '../firebase';
+import { doc, addDoc, collection, setDoc, deleteDoc } from 'firebase/firestore';
 import "../index.css";
 import PhotoUploader from './PhotoUploader';
 
@@ -14,7 +12,6 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
     school: '',
     subject: '',
     hashtags: [],
-    photoFile: null,
     photoURL: '',
     classRecords: [],
     scores: [],
@@ -25,6 +22,7 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // ⚡ 載入預設資料
   useEffect(() => {
     if (defaultData) {
       setFormData(prev => ({
@@ -60,25 +58,12 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
     setFormData(prev => ({ ...prev, hashtags: newTags }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, photoFile: file }));
-    }
-  };
-
   const handleSave = async () => {
     setLoading(true);
     const userId = auth.currentUser.uid;
-    let photoURL = formData.photoURL;
+    const photoURL = formData.photoURL;
 
     try {
-      if (formData.photoFile) {
-        const fileRef = ref(storage, `users/${userId}/students/${uuidv4()}`);
-        await uploadBytes(fileRef, formData.photoFile);
-        photoURL = await getDownloadURL(fileRef);
-      }
-
       const studentData = {
         name: formData.name,
         grade: formData.grade,
@@ -99,11 +84,24 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
         await addDoc(studentRef, studentData);
       }
 
-      navigate('/students'); // 儲存後跳轉
+      navigate('/students');
     } catch (error) {
       console.error('儲存錯誤:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('確定要刪除這筆資料嗎？')) return;
+
+    try {
+      const userId = auth.currentUser.uid;
+      const studentRef = doc(db, 'users', userId, 'students', studentId);
+      await deleteDoc(studentRef);
+      navigate('/students');
+    } catch (error) {
+      console.error('刪除失敗:', error);
     }
   };
 
@@ -138,26 +136,33 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-6 rounded shadow space-y-4 w-full max-w-2xl">
+      <div className="bg-white p-6 rounded shadow space-y-4 w-full max-w-2xl relative">
+
+        {/* 返回按鈕 */}
+        <button
+          onClick={() => navigate('/students')}
+          className="absolute top-4 right-4 px-3 py-1.5 text-sm rounded border border-gray-400 text-gray-700 bg-white hover:!bg-[#FFFFD0] hover:!border-black transition-colors duration-200 z-10"
+        >
+          返回學生列表
+        </button>
+
         <h2 className="text-lg font-semibold">{isEdit ? '編輯學生' : '新增學生'}</h2>
 
-       <div>
+        {/* 📸 照片上傳元件 */}
+        <PhotoUploader
+          initialPhotoURL={formData.photoURL}
+          onFileChange={(url) =>
+            setFormData((prev) => ({ ...prev, photoURL: url }))
+          }
+        />
 
-<PhotoUploader
-  initialPhotoURL={formData.photoURL}
-  onFileChange={(url) =>
-    setFormData((prev) => ({ ...prev, photoURL: url }))
-  }
-/>
-
-      </div>
-
-
+        {/* 文字欄位 */}
         <div><label>姓名：</label><input name="name" value={formData.name} onChange={handleChange} className="border p-1 w-full" /></div>
         <div><label>年級：</label><input name="grade" value={formData.grade} onChange={handleChange} className="border p-1 w-full" /></div>
         <div><label>學校：</label><input name="school" value={formData.school} onChange={handleChange} className="border p-1 w-full" /></div>
         <div><label>科目：</label><input name="subject" value={formData.subject} onChange={handleChange} className="border p-1 w-full" /></div>
 
+        {/* Hashtag */}
         <div>
           <label>學生個性 Hashtag：</label>
           <div className="flex flex-wrap gap-2 my-2">
@@ -176,80 +181,74 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
           />
         </div>
 
-        {/* Class Records */}
+        {/* 上課紀錄 */}
         <div>
           <label className="font-semibold">上課紀錄：</label>
           {formData.classRecords.map((record, index) => (
             <div key={index} className="flex gap-2 mb-2">
-              <input
-                className="border p-1 flex-1"
-                placeholder="日期"
-                value={record.date}
-                onChange={(e) => handleArrayChange('classRecords', index, 'date', e.target.value)}
-              />
-              <input
-                className="border p-1 flex-1"
-                placeholder="內容"
-                value={record.content}
-                onChange={(e) => handleArrayChange('classRecords', index, 'content', e.target.value)}
-              />
+              <input className="border p-1 flex-1" placeholder="日期" value={record.date} onChange={(e) => handleArrayChange('classRecords', index, 'date', e.target.value)} />
+              <input className="border p-1 flex-1" placeholder="內容" value={record.content} onChange={(e) => handleArrayChange('classRecords', index, 'content', e.target.value)} />
               <button onClick={() => handleDeleteItem('classRecords', index)} className="text-red-500">刪除</button>
             </div>
           ))}
           <button onClick={() => handleAddItem('classRecords')} className="text-blue-500">+ 新增紀錄</button>
         </div>
 
-        {/* Scores */}
+        {/* 成績紀錄 */}
         <div>
           <label className="font-semibold">成績紀錄：</label>
           {formData.scores.map((score, index) => (
             <div key={index} className="flex gap-2 mb-2">
-              <input
-                className="border p-1 flex-1"
-                placeholder="科目"
-                value={score.subject}
-                onChange={(e) => handleArrayChange('scores', index, 'subject', e.target.value)}
-              />
-              <input
-                className="border p-1 flex-1"
-                placeholder="分數"
-                value={score.score}
-                onChange={(e) => handleArrayChange('scores', index, 'score', e.target.value)}
-              />
+              <input className="border p-1 flex-1" placeholder="科目" value={score.subject} onChange={(e) => handleArrayChange('scores', index, 'subject', e.target.value)} />
+              <input className="border p-1 flex-1" placeholder="分數" value={score.score} onChange={(e) => handleArrayChange('scores', index, 'score', e.target.value)} />
               <button onClick={() => handleDeleteItem('scores', index)} className="text-red-500">刪除</button>
             </div>
           ))}
           <button onClick={() => handleAddItem('scores')} className="text-blue-500">+ 新增成績</button>
         </div>
 
-        {/* Parents */}
+        {/* 家長聯絡 */}
         <div>
           <label className="font-semibold">家長聯絡：</label>
           {formData.parents.map((parent, index) => (
             <div key={index} className="flex gap-2 mb-2">
-              <input
-                className="border p-1 flex-1"
-                placeholder="姓名"
-                value={parent.name}
-                onChange={(e) => handleArrayChange('parents', index, 'name', e.target.value)}
-              />
-              <input
-                className="border p-1 flex-1"
-                placeholder="聯絡方式"
-                value={parent.contact}
-                onChange={(e) => handleArrayChange('parents', index, 'contact', e.target.value)}
-              />
+              <input className="border p-1 flex-1" placeholder="姓名" value={parent.name} onChange={(e) => handleArrayChange('parents', index, 'name', e.target.value)} />
+              <input className="border p-1 flex-1" placeholder="聯絡方式" value={parent.contact} onChange={(e) => handleArrayChange('parents', index, 'contact', e.target.value)} />
               <button onClick={() => handleDeleteItem('parents', index)} className="text-red-500">刪除</button>
             </div>
           ))}
           <button onClick={() => handleAddItem('parents')} className="text-blue-500">+ 新增家長</button>
         </div>
 
-        <button onClick={handleSave} disabled={loading} className={`my-custom-btn ${loading ? 'disabled-btn' : ''}`}>
-          {loading ? '儲存中...' : '儲存'}
-        </button>
+        {/* 儲存與刪除按鈕 */}
+        <div className="flex items-center mt-4">
+          {isEdit && (
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 rounded border transition-colors 
+                        !bg-[#912224] text-white !border-[#912224]
+                        hover:!bg-white hover:text-[#912224] hover:border-black"
+            >
+              刪除資料
+            </button>
+          )}
+
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className={`ml-auto px-4 py-2 rounded border transition-colors
+                        !border-[#228991]
+                        ${loading
+              ? '!bg-[#22899180] text-white cursor-not-allowed'
+              : '!bg-[#228991] text-white hover:!bg-white hover:text-[#228991] hover:border-black'}`}
+          >
+            {loading ? '儲存中...' : '儲存'}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
+
 
