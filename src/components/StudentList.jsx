@@ -1,35 +1,27 @@
 // components/StudentList.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import StudentCard from './StudentCard';
 import useStudentList from '../hooks/useStudentList';
+import FilterBar from './FilterBar'; // <-- 加入 FilterBar
 
 export default function StudentList() {
   const students = useStudentList();
-  const [hover, setHover] = useState(false);
-  const navigate = useNavigate();
+  const [filteredStudents, setFilteredStudents] = useState([]);
+
+  useEffect(() => {
+    setFilteredStudents(students); // 預設顯示所有學生
+  }, [students]);
 
   return (
     <div className="p-4 pt-24 px-10">
-      <button
-        style={{
-          backgroundColor: hover ? 'white' : '#228991',
-          color: hover ? '#228991' : 'white',
-          border: '1px solid #228991',
-        }}
-        className="px-4 py-2 rounded transition-colors duration-200"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onClick={() => navigate('/students/new')}
-      >
-        ＋ 新增學生
-      </button>
+      <FilterBar students={students} setFiltered={setFilteredStudents} />
 
       <div className="mt-4 space-y-4">
-        {students.map(student => (
+        {filteredStudents.map(student => (
           <StudentCard key={student.id} student={student} />
         ))}
       </div>
     </div>
   );
 }
+

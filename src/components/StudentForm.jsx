@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, storage, auth } from '../firebase';
 import { doc, addDoc, collection, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import "../index.css";
+import PhotoUploader from './PhotoUploader';
 
-export default function StudentForm({ isEdit, studentId, defaultData, onSuccess }) {
+export default function StudentForm({ isEdit, studentId, defaultData }) {
   const [formData, setFormData] = useState({
     name: '',
     grade: '',
@@ -21,6 +23,7 @@ export default function StudentForm({ isEdit, studentId, defaultData, onSuccess 
 
   const [hashtagInput, setHashtagInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (defaultData) {
@@ -69,33 +72,34 @@ export default function StudentForm({ isEdit, studentId, defaultData, onSuccess 
     const userId = auth.currentUser.uid;
     let photoURL = formData.photoURL;
 
-    if (formData.photoFile) {
-      const fileRef = ref(storage, `users/${userId}/students/${uuidv4()}`);
-      await uploadBytes(fileRef, formData.photoFile);
-      photoURL = await getDownloadURL(fileRef);
-    }
-
-    const studentData = {
-      name: formData.name,
-      grade: formData.grade,
-      school: formData.school,
-      subject: formData.subject,
-      hashtags: formData.hashtags,
-      photoURL: photoURL || '',
-      classRecords: formData.classRecords,
-      scores: formData.scores,
-      parents: formData.parents
-    };
-
-    const studentRef = collection(db, 'users', userId, 'students');
-
     try {
+      if (formData.photoFile) {
+        const fileRef = ref(storage, `users/${userId}/students/${uuidv4()}`);
+        await uploadBytes(fileRef, formData.photoFile);
+        photoURL = await getDownloadURL(fileRef);
+      }
+
+      const studentData = {
+        name: formData.name,
+        grade: formData.grade,
+        school: formData.school,
+        subject: formData.subject,
+        hashtags: formData.hashtags,
+        photoURL: photoURL || '',
+        classRecords: formData.classRecords,
+        scores: formData.scores,
+        parents: formData.parents
+      };
+
+      const studentRef = collection(db, 'users', userId, 'students');
+
       if (isEdit) {
         await setDoc(doc(studentRef, studentId), studentData);
       } else {
         await addDoc(studentRef, studentData);
       }
-      onSuccess();
+
+      navigate('/students'); // 儲存後跳轉
     } catch (error) {
       console.error('儲存錯誤:', error);
     } finally {
@@ -137,11 +141,17 @@ export default function StudentForm({ isEdit, studentId, defaultData, onSuccess 
       <div className="bg-white p-6 rounded shadow space-y-4 w-full max-w-2xl">
         <h2 className="text-lg font-semibold">{isEdit ? '編輯學生' : '新增學生'}</h2>
 
-        <div>
-          <label>學生照片：</label>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          {formData.photoURL && <img src={formData.photoURL} alt="student" className="w-24 mt-2" />}
-        </div>
+       <div>
+
+<PhotoUploader
+  initialPhotoURL={formData.photoURL}
+  onFileChange={(url) =>
+    setFormData((prev) => ({ ...prev, photoURL: url }))
+  }
+/>
+
+      </div>
+
 
         <div><label>姓名：</label><input name="name" value={formData.name} onChange={handleChange} className="border p-1 w-full" /></div>
         <div><label>年級：</label><input name="grade" value={formData.grade} onChange={handleChange} className="border p-1 w-full" /></div>
@@ -242,3 +252,4 @@ export default function StudentForm({ isEdit, studentId, defaultData, onSuccess 
     </div>
   );
 }
+
