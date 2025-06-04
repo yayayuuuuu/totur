@@ -13,7 +13,7 @@ function Home() {
   return (
     <div>
       <Header />
-      <div className="p-8 pt-24">
+      <div className="p-8 pt-20">
         <CalendarSection />
       </div>
 

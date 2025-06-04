@@ -1,4 +1,3 @@
-// components/StudentFormContainer.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
@@ -24,6 +23,10 @@ export default function StudentFormContainer() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded shadow-md">
+     <h2 className="text-xl font-semibold text-center mb-4">
+        {(defaultData?.name || 'XXX')} 的學習檔案
+    </h2>
+    
       <StudentForm
         isEdit={!!id}
         studentId={id}

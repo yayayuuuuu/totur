@@ -18,11 +18,17 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
     parents: []
   });
 
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    grade: false,
+    school: false,
+    subject: false
+  });
+
   const [hashtagInput, setHashtagInput] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ⚡ 載入預設資料
   useEffect(() => {
     if (defaultData) {
       setFormData(prev => ({
@@ -39,6 +45,9 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (value.trim()) {
+      setFormErrors(prev => ({ ...prev, [name]: false }));
+    }
   };
 
   const handleHashtagKeyDown = (e) => {
@@ -59,6 +68,27 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
   };
 
   const handleSave = async () => {
+    const errors = {
+      name: !formData.name.trim(),
+      grade: !formData.grade.trim(),
+      school: !formData.school.trim(),
+      subject: !formData.subject.trim()
+    };
+
+    setFormErrors(errors);
+
+    const firstErrorField = Object.keys(errors).find(key => errors[key]);
+    if (firstErrorField) {
+      const fieldNames = {
+        name: '學生姓名',
+        grade: '年級',
+        school: '學校',
+        subject: '科目'
+      };
+      window.alert(`⚠ 請填寫 ${fieldNames[firstErrorField]}`);
+      return;
+    }
+
     setLoading(true);
     const userId = auth.currentUser.uid;
     const photoURL = formData.photoURL;
@@ -135,7 +165,7 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center ">
       <div className="bg-white p-6 rounded shadow space-y-4 w-full max-w-2xl relative">
 
         {/* 返回按鈕 */}
@@ -146,9 +176,7 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
           返回學生列表
         </button>
 
-        <h2 className="text-lg font-semibold">{isEdit ? '編輯學生' : '新增學生'}</h2>
-
-        {/* 📸 照片上傳元件 */}
+        {/* 照片上傳元件 */}
         <PhotoUploader
           initialPhotoURL={formData.photoURL}
           onFileChange={(url) =>
@@ -156,11 +184,54 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
           }
         />
 
-        {/* 文字欄位 */}
-        <div><label>姓名：</label><input name="name" value={formData.name} onChange={handleChange} className="border p-1 w-full" /></div>
-        <div><label>年級：</label><input name="grade" value={formData.grade} onChange={handleChange} className="border p-1 w-full" /></div>
-        <div><label>學校：</label><input name="school" value={formData.school} onChange={handleChange} className="border p-1 w-full" /></div>
-        <div><label>科目：</label><input name="subject" value={formData.subject} onChange={handleChange} className="border p-1 w-full" /></div>
+        {/* 必填欄位 */}
+        <div>
+          <label>姓名：</label>
+          <input
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className={`border p-1 w-full rounded ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="請輸入學生姓名"
+          />
+          {formErrors.name && <p className="text-red-500 text-sm mt-1">請填寫學生姓名</p>}
+        </div>
+
+        <div>
+          <label>年級：</label>
+          <input
+            name="grade"
+            value={formData.grade}
+            onChange={handleChange}
+            className={`border p-1 w-full rounded ${formErrors.grade ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="請輸入年級"
+          />
+          {formErrors.grade && <p className="text-red-500 text-sm mt-1">請填寫年級</p>}
+        </div>
+
+        <div>
+          <label>學校：</label>
+          <input
+            name="school"
+            value={formData.school}
+            onChange={handleChange}
+            className={`border p-1 w-full rounded ${formErrors.school ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="請輸入學校名稱"
+          />
+          {formErrors.school && <p className="text-red-500 text-sm mt-1">請填寫學校</p>}
+        </div>
+
+        <div>
+          <label>科目：</label>
+          <input
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className={`border p-1 w-full rounded ${formErrors.subject ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="請輸入科目"
+          />
+          {formErrors.subject && <p className="text-red-500 text-sm mt-1">請填寫科目</p>}
+        </div>
 
         {/* Hashtag */}
         <div>
@@ -177,7 +248,7 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
             value={hashtagInput}
             onChange={(e) => setHashtagInput(e.target.value)}
             onKeyDown={handleHashtagKeyDown}
-            className="border p-1 w-full"
+            className="border p-1 w-full rounded"
           />
         </div>
 
@@ -249,6 +320,11 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
     </div>
   );
 }
+
+
+
+
+
 
 
 

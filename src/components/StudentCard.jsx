@@ -8,10 +8,10 @@ export default function StudentCard({ student }) {
 
   return (
     <div className="flex bg-white shadow p-4 rounded-md items-center justify-between">
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-8">
         <img
           src={student.photoURL || "/images/stuphoto.png"}
-          className="w-12 h-12 rounded-full"
+          className="w-16 h-16 rounded-full"
           alt="avatar"
         />
         <div>
