@@ -6,7 +6,7 @@ export default function HamburgerMenu() {
   const [open, setOpen] = useState(false);
   const { currentUser } = useAuth();
 
-  // 如果沒有登入，不顯示漢堡選單
+  
   if (!currentUser) return null;
 
   return (
@@ -32,11 +32,11 @@ export default function HamburgerMenu() {
 
       {/* 側邊選單 */}
       <div
-        className={`fixed top-24 left-0 h-[calc(100%-6rem)] w-64 bg-[#2B5659] text-white z-40 transition-transform duration-300 ${
+        className={`fixed top-15 left-0 h-[calc(100%-6rem)] w-64 bg-[#2B5659] text-white z-40 transition-transform duration-300 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <ul className="flex flex-col p-6 space-y-6 pt-30">
+        <ul className="flex flex-col p-6 space-y-6 pt-35">
           <li>
             <Link
               to="/calendar"
@@ -61,7 +61,7 @@ export default function HamburgerMenu() {
       {/* 背景遮罩 */}
       {open && (
         <div
-          className="fixed inset-0 top-24 backdrop-blur-md bg-black/10 z-30"
+          className="fixed inset-0 top-15 backdrop-blur-md bg-black/10 z-30"
           onClick={() => setOpen(false)}
         />
       )}

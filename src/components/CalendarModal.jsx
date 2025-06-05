@@ -26,11 +26,11 @@ const CalendarModal = ({
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-      onClick={handleBackdropClick} // ← 新增這行
+      onClick={handleBackdropClick} 
     >
       <div
         className="bg-white p-6 rounded shadow-md w-[300px]"
-        onClick={(e) => e.stopPropagation()} // ← 新增這行
+        onClick={(e) => e.stopPropagation()} 
       >
         <h2 className="text-xl font-semibold mb-4">
           {isEditing ? "編輯課程" : "新增課程"}

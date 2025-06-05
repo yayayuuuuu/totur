@@ -22,7 +22,7 @@ export default function StudentFormContainer() {
   }, [id]);
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 !bg-[#e4f8fa] rounded shadow-md">
+    <div className="w-full max-w-3xl mx-auto p-6 !bg-[#e4f8fa] rounded shadow-md mb-15 px-4 sm:px-0">
      <h2 className="text-xl font-semibold text-center mb-4">
         {(defaultData?.name || 'XXX')} 的學習檔案
     </h2>

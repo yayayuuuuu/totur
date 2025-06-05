@@ -32,7 +32,7 @@ const UserProfileModal = ({ onClose, buttonRef }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, buttonRef]);
 
-  // 鎖住背景滾動（手機）
+  
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -40,7 +40,7 @@ const UserProfileModal = ({ onClose, buttonRef }) => {
     };
   }, []);
 
-  // 根據按鈕位置計算浮動位置（只用在桌機）
+ 
   const modalStyle =
     window.innerWidth >= 768 && buttonRef?.current
       ? {

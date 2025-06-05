@@ -13,36 +13,46 @@ function Header() {
   const isSigninPage = location.pathname === "/signin";
 
   return (
-    <header className="fixed top-0 left-0 bg-[#61C6CD] w-full h-24 flex items-center justify-between z-50 shadow-md px-6">
+  <header className="fixed top-0 left-0 bg-[#61C6CD] w-full h-20 flex items-center justify-between z-50 shadow-md px-4 sm:px-6">
       {/* 左側 Logo */}
+     {!currentUser ? (
+      <Link to="/">
+        <img
+          src="/images/logo-v1.svg"
+          className="w-28 sm:w-40 h-auto cursor-pointer"
+          alt="Logo"
+        />
+      </Link>
+    ) : (
       <img
         src="/images/logo-v1.svg"
-        className="w-40 h-auto"
+        className="w-28 sm:w-40 h-auto"
         alt="Logo"
       />
+    )}
 
       {/* 右上角按鈕 */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
         {!currentUser ? (
           <>
             <Link
               to="/signin"
-              className="bg-white border border-2 rounded-sm px-4 py-2 text-black"
+              className="bg-white border-2 rounded-sm px-4 py-1.5 text-black text-sm sm:text-base"
             >
               登入
             </Link>
             <Link
               to="/signup"
-              className="bg-white border border-2 rounded-sm px-4 py-2 text-black"
+              className="bg-white border-2 rounded-sm px-4 py-1.5 text-black text-sm sm:text-base "
             >
               註冊
             </Link>
           </>
         ) : (
           <button
-            ref={buttonRef} // 👉 指定 ref
+            ref={buttonRef}
             onClick={() => setShowProfile(true)}
-            className="border border-2 rounded-sm px-4 py-2 text-black hover:!bg-[#FFFFD0] hover:!border-black"
+            className="border-2 rounded-sm px-4 py-1.5 text-black text-sm sm:text-base hover:!bg-[#FFFFD0] hover:!border-black"
           >
             會員中心
           </button>
@@ -53,10 +63,11 @@ function Header() {
       {showProfile && (
         <UserProfileModal
           onClose={() => setShowProfile(false)}
-          buttonRef={buttonRef} // 👉 傳入 buttonRef
+          buttonRef={buttonRef}
         />
       )}
     </header>
+
   );
 }
 

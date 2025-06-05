@@ -37,7 +37,7 @@ function PhotoUploader({ onFileChange, initialPhotoURL }) {
       );
       const data = await res.json();
       setPhotoURL(data.secure_url);
-      onFileChange(data.secure_url); // 通知父層更新
+      onFileChange(data.secure_url); 
     } catch (error) {
       console.error("上傳失敗：", error);
     } finally {

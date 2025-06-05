@@ -165,8 +165,8 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="bg-white p-6 rounded shadow space-y-4 w-full max-w-2xl relative">
+   <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="bg-white p-6 rounded shadow space-y-6 w-full max-w-2xl relative">
 
         {/* 返回按鈕 */}
         <button
@@ -184,140 +184,116 @@ export default function StudentForm({ isEdit, studentId, defaultData }) {
           }
         />
 
-        {/* 必填欄位 */}
-        <div>
-          <label>姓名：</label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className={`border p-1 w-full rounded ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
-            placeholder="請輸入學生姓名"
-          />
-          {formErrors.name && <p className="text-red-500 text-sm mt-1">請填寫學生姓名</p>}
-        </div>
+        {/* 表單欄位 */}
+        <div className="space-y-4">
+          {[
+            { label: '姓名', name: 'name', error: formErrors.name },
+            { label: '年級', name: 'grade', error: formErrors.grade },
+            { label: '學校', name: 'school', error: formErrors.school },
+            { label: '科目', name: 'subject', error: formErrors.subject }
+          ].map((field) => (
+            <div key={field.name}>
+              <label>{field.label}：</label>
+              <input
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleChange}
+                placeholder={`請輸入${field.label}`}
+                className={`border p-2 w-full rounded ${field.error ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {field.error && <p className="text-red-500 text-sm mt-1">請填寫{field.label}</p>}
+            </div>
+          ))}
 
-        <div>
-          <label>年級：</label>
-          <input
-            name="grade"
-            value={formData.grade}
-            onChange={handleChange}
-            className={`border p-1 w-full rounded ${formErrors.grade ? 'border-red-500' : 'border-gray-300'}`}
-            placeholder="請輸入年級"
-          />
-          {formErrors.grade && <p className="text-red-500 text-sm mt-1">請填寫年級</p>}
-        </div>
-
-        <div>
-          <label>學校：</label>
-          <input
-            name="school"
-            value={formData.school}
-            onChange={handleChange}
-            className={`border p-1 w-full rounded ${formErrors.school ? 'border-red-500' : 'border-gray-300'}`}
-            placeholder="請輸入學校名稱"
-          />
-          {formErrors.school && <p className="text-red-500 text-sm mt-1">請填寫學校</p>}
-        </div>
-
-        <div>
-          <label>科目：</label>
-          <input
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className={`border p-1 w-full rounded ${formErrors.subject ? 'border-red-500' : 'border-gray-300'}`}
-            placeholder="請輸入科目"
-          />
-          {formErrors.subject && <p className="text-red-500 text-sm mt-1">請填寫科目</p>}
-        </div>
-
-        {/* Hashtag */}
-        <div>
-          <label>學生個性 Hashtag：</label>
-          <div className="flex flex-wrap gap-2 my-2">
-            {formData.hashtags.map((tag, index) => (
-              <span key={index} className="bg-blue-100 px-2 py-1 rounded text-sm cursor-pointer" onClick={() => handleRemoveHashtag(index)}>
-                #{tag} ✕
-              </span>
-            ))}
+          {/* Hashtag */}
+          <div>
+            <label>學生個性 Hashtag：</label>
+            <div className="flex flex-wrap gap-2 my-2">
+              {formData.hashtags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-100 px-2 py-1 rounded text-sm cursor-pointer"
+                  onClick={() => handleRemoveHashtag(index)}
+                >
+                  #{tag} ✕
+                </span>
+              ))}
+            </div>
+            <input
+              placeholder="輸入後按 Enter 新增"
+              value={hashtagInput}
+              onChange={(e) => setHashtagInput(e.target.value)}
+              onKeyDown={handleHashtagKeyDown}
+              className="border p-2 w-full rounded"
+            />
           </div>
-          <input
-            placeholder="輸入後按 Enter 新增"
-            value={hashtagInput}
-            onChange={(e) => setHashtagInput(e.target.value)}
-            onKeyDown={handleHashtagKeyDown}
-            className="border p-1 w-full rounded"
-          />
-        </div>
 
-        {/* 上課紀錄 */}
-        <div>
-          <label className="font-semibold">上課紀錄：</label>
-          {formData.classRecords.map((record, index) => (
-            <div key={index} className="flex gap-2 mb-2">
-              <input className="border p-1 flex-1" placeholder="日期" value={record.date} onChange={(e) => handleArrayChange('classRecords', index, 'date', e.target.value)} />
-              <input className="border p-1 flex-1" placeholder="內容" value={record.content} onChange={(e) => handleArrayChange('classRecords', index, 'content', e.target.value)} />
-              <button onClick={() => handleDeleteItem('classRecords', index)} className="text-red-500">刪除</button>
-            </div>
-          ))}
-          <button onClick={() => handleAddItem('classRecords')} className="text-blue-500">+ 新增紀錄</button>
-        </div>
+          {/* 上課紀錄 */}
+          <div className="mt-10">
+            <label className="font-semibold">上課紀錄：</label>
+            {formData.classRecords.map((record, index) => (
+              <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2">
+                <input className="border p-2 flex-1" placeholder="日期" value={record.date} onChange={(e) => handleArrayChange('classRecords', index, 'date', e.target.value)} />
+                <input className="border p-2 flex-1" placeholder="內容" value={record.content} onChange={(e) => handleArrayChange('classRecords', index, 'content', e.target.value)} />
+                <button onClick={() => handleDeleteItem('classRecords', index)} className="text-red-500">刪除</button>
+              </div>
+            ))}
+            <button onClick={() => handleAddItem('classRecords')} className="text-blue-500">+ 新增紀錄</button>
+          </div>
 
-        {/* 成績紀錄 */}
-        <div>
-          <label className="font-semibold">成績紀錄：</label>
-          {formData.scores.map((score, index) => (
-            <div key={index} className="flex gap-2 mb-2">
-              <input className="border p-1 flex-1" placeholder="科目" value={score.subject} onChange={(e) => handleArrayChange('scores', index, 'subject', e.target.value)} />
-              <input className="border p-1 flex-1" placeholder="分數" value={score.score} onChange={(e) => handleArrayChange('scores', index, 'score', e.target.value)} />
-              <button onClick={() => handleDeleteItem('scores', index)} className="text-red-500">刪除</button>
-            </div>
-          ))}
-          <button onClick={() => handleAddItem('scores')} className="text-blue-500">+ 新增成績</button>
-        </div>
+          {/* 成績紀錄 */}
+          <div>
+            <label className="font-semibold">成績紀錄：</label>
+            {formData.scores.map((score, index) => (
+              <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2">
+                <input className="border p-2 flex-1" placeholder="科目" value={score.subject} onChange={(e) => handleArrayChange('scores', index, 'subject', e.target.value)} />
+                <input className="border p-2 flex-1" placeholder="分數" value={score.score} onChange={(e) => handleArrayChange('scores', index, 'score', e.target.value)} />
+                <button onClick={() => handleDeleteItem('scores', index)} className="text-red-500">刪除</button>
+              </div>
+            ))}
+            <button onClick={() => handleAddItem('scores')} className="text-blue-500">+ 新增成績</button>
+          </div>
 
-        {/* 家長聯絡 */}
-        <div>
-          <label className="font-semibold">家長聯絡：</label>
-          {formData.parents.map((parent, index) => (
-            <div key={index} className="flex gap-2 mb-2">
-              <input className="border p-1 flex-1" placeholder="姓名" value={parent.name} onChange={(e) => handleArrayChange('parents', index, 'name', e.target.value)} />
-              <input className="border p-1 flex-1" placeholder="聯絡方式" value={parent.contact} onChange={(e) => handleArrayChange('parents', index, 'contact', e.target.value)} />
-              <button onClick={() => handleDeleteItem('parents', index)} className="text-red-500">刪除</button>
-            </div>
-          ))}
-          <button onClick={() => handleAddItem('parents')} className="text-blue-500">+ 新增家長</button>
+          {/* 家長聯絡 */}
+          <div>
+            <label className="font-semibold">家長聯絡：</label>
+            {formData.parents.map((parent, index) => (
+              <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2">
+                <input className="border p-2 flex-1" placeholder="姓名" value={parent.name} onChange={(e) => handleArrayChange('parents', index, 'name', e.target.value)} />
+                <input className="border p-2 flex-1" placeholder="聯絡方式" value={parent.contact} onChange={(e) => handleArrayChange('parents', index, 'contact', e.target.value)} />
+                <button onClick={() => handleDeleteItem('parents', index)} className="text-red-500">刪除</button>
+              </div>
+            ))}
+            <button onClick={() => handleAddItem('parents')} className="text-blue-500">+ 新增家長</button>
+          </div>
         </div>
 
         {/* 儲存與刪除按鈕 */}
-        <div className="flex items-center mt-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-6">
           {isEdit && (
             <button
               onClick={handleDelete}
-              className="px-4 py-2 rounded border transition-colors 
-                        !bg-[#912224] text-white !border-[#912224]
-                        hover:!bg-white hover:text-[#912224] hover:border-black"
+              className="px-4 py-2 rounded border !bg-[#912224] text-white !border-[#912224]
+                        hover:!bg-white hover:text-[#912224] hover:border-black transition-colors"
             >
               刪除資料
             </button>
           )}
-
           <button
             onClick={handleSave}
             disabled={loading}
-            className={`ml-auto px-4 py-2 rounded border transition-colors
-                        !border-[#228991]
+            className={`px-4 py-2 rounded border !border-[#228991] 
                         ${loading
-              ? '!bg-[#22899180] text-white cursor-not-allowed'
-              : '!bg-[#228991] text-white hover:!bg-white hover:text-[#228991] hover:border-black'}`}
+                ? '!bg-[#22899180] text-white cursor-not-allowed'
+                : '!bg-[#228991] text-white hover:!bg-white hover:text-[#228991] hover:border-black'}
+                        sm:ml-auto`}
           >
             {loading ? '儲存中...' : '儲存'}
           </button>
         </div>
       </div>
     </div>
+
   );
 }
 

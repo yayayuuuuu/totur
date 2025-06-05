@@ -9,6 +9,7 @@ import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Link } from "react-router-dom";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -147,9 +148,10 @@ const CalendarSection = () => {
   }, []);
 
   return (
-    <div className="mt-6 px-4 sm:px-6 md:px-10 pt-5 sm:pt-10 ">
-      {upcomingEvent && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded shadow text-sm sm:text-base">
+    <div className="mt-6 px-4 sm:px-6 md:px-10 pt-5 sm:pt-5 ">
+    {upcomingEvent && (
+      // <Link to={`/students/${upcomingEvent.extendedProps.studentId}`}>
+        <div className="cursor-pointer bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded shadow text-sm sm:text-base  transition">
           <p className="font-semibold">提醒事項：</p>
           <p>
             <span className="font-bold">{upcomingEvent.extendedProps.studentName}</span> 的{" "}
@@ -161,7 +163,8 @@ const CalendarSection = () => {
           </p>
           <p className="mt-1 text-gray-600">⏳ 距離開始：{countdownText}</p>
         </div>
-      )}
+      // </Link>
+    )}
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer className="bg-[#2B5659] w-full flex flex-col md:flex-row items-center justify-evenly mt-10 py-6 md:h-40 gap-6 md:gap-0">
+        <footer className="bg-[#2B5659] w-full flex flex-col md:flex-row items-center justify-evenly  py-6 md:h-40 gap-6 md:gap-0">
             {/* 標題區塊 */}
             <div className="footer-title text-center md:text-left">
                 <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-white">Tutor Track</p>
