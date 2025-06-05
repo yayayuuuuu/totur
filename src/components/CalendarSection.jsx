@@ -32,8 +32,9 @@ const CalendarSection = () => {
   const [subject, setSubject] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-
   const [countdownText, setCountdownText] = useState("");
+
+  const [calendarView, setCalendarView] = useState("dayGridMonth");
 
   const resetModal = () => {
     setStudentName("");
@@ -106,7 +107,6 @@ const CalendarSection = () => {
     return sorted[0] || null;
   }, [events]);
 
-  // 🔁 倒數時間更新邏輯
   useEffect(() => {
     if (!upcomingEvent) {
       setCountdownText("");
@@ -129,16 +129,27 @@ const CalendarSection = () => {
       setCountdownText(text);
     };
 
-    updateCountdown(); // 初始更新
-    const interval = setInterval(updateCountdown, 60000); // 每分鐘更新
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 60000);
 
-    return () => clearInterval(interval); // 清除 interval
+    return () => clearInterval(interval);
   }, [upcomingEvent]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 640;
+      setCalendarView(isMobile ? "timeGridDay" : "dayGridMonth");
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="mt-10">
+    <div className="mt-6 px-4 sm:px-6 md:px-10 pt-5 sm:pt-10 ">
       {upcomingEvent && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded shadow">
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded shadow text-sm sm:text-base">
           <p className="font-semibold">提醒事項：</p>
           <p>
             <span className="font-bold">{upcomingEvent.extendedProps.studentName}</span> 的{" "}
@@ -148,13 +159,13 @@ const CalendarSection = () => {
             </span>{" "}
             開始。
           </p>
-          <p className="mt-1 text-sm text-gray-600">⏳ 距離開始：{countdownText}</p>
+          <p className="mt-1 text-gray-600">⏳ 距離開始：{countdownText}</p>
         </div>
       )}
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
+        initialView={calendarView}
         headerToolbar={{
           left: "prev,next today",
           center: "title",

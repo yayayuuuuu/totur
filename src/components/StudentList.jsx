@@ -12,7 +12,7 @@ export default function StudentList() {
   }, [students]);
 
   return (
-    <div className="p-4 pt-24 px-10 min-h-screen bg-white">
+    <div className="pt-3 px-4 sm:pt-10 sm:px-6 md:px-10 min-h-screen bg-white">
       <FilterBar students={students} setFiltered={setFilteredStudents} />
 
       {filteredStudents.length === 0 ? (

@@ -7,7 +7,7 @@ export default function StudentCard({ student }) {
   const [hover, setHover] = useState(false);
 
   return (
-    <div className="flex bg-white shadow p-4 rounded-md items-center justify-between">
+    <div className="flex bg-white shadow p-10 rounded-md items-center justify-between">
       <div className="flex items-center space-x-8">
         <img
           src={student.photoURL || "/images/stuphoto.png"}
