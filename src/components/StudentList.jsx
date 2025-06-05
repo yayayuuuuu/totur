@@ -18,7 +18,8 @@ export default function StudentList() {
       {filteredStudents.length === 0 ? (
         <div className="mt-12 text-center text-gray-600">
           <p className="mb-6 text-lg">
-            還沒有資料，請點擊左上角 <span className="font-semibold text-[#61C6CD]">新增學生</span>！
+            還沒有資料，請點擊左上角{' '}
+            <span className="font-semibold text-[#61C6CD]">新增學生</span>！
           </p>
 
           {/* 用和 StudentCard 相同的容器包住虛線卡 */}
