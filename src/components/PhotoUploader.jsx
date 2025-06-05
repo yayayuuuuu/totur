@@ -50,7 +50,7 @@ function PhotoUploader({ onFileChange, initialPhotoURL }) {
       <label className="block mb-1">學生照片：</label>
       <div
         onClick={handleClick}
-        className="w-32 h-32 rounded-full overflow-hidden border-2 border-dashed border-gray-400 cursor-pointer flex items-center justify-center relative group"
+        className="w-32 h-32 rounded-full overflow-hidden border-2  border-gray-400 cursor-pointer flex items-center justify-center relative group"
       >
         <img
           src={photoURL || defaultImage}

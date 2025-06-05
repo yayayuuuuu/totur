@@ -6,9 +6,11 @@ import Footer from '../components/Footer';
 
 export default function StudentListPage() {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <StudentList />
+      <main className="flex-grow">
+        <StudentList />
+      </main>
       <Footer />
     </div>
   );
