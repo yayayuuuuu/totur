@@ -16,9 +16,22 @@ const CalendarModal = ({
   onSubmit,
   onDelete,
 }) => {
+  // 點擊遮罩區關閉 modal
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onCancel();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-md w-[300px]">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+      onClick={handleBackdropClick} // ← 新增這行
+    >
+      <div
+        className="bg-white p-6 rounded shadow-md w-[300px]"
+        onClick={(e) => e.stopPropagation()} // ← 新增這行
+      >
         <h2 className="text-xl font-semibold mb-4">
           {isEditing ? "編輯課程" : "新增課程"}
         </h2>

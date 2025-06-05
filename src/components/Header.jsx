@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import UserProfileModal from "./UserProfileModal"; // 確保路徑正確
 
 function Header() {
   const location = useLocation();
   const { currentUser } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
+  const buttonRef = useRef(); // 👉 加上這行
 
   const isIntroPage = location.pathname === "/";
   const isSigninPage = location.pathname === "/signin";
@@ -38,25 +39,22 @@ function Header() {
             </Link>
           </>
         ) : (
-        <button
-          onClick={() => setShowProfile(true)}
-          className="border border-2 rounded-sm px-4 py-2 text-black hover:!bg-[#FFFFD0] hover:!border-black"
-        >
-          會員中心
-        </button>
+          <button
+            ref={buttonRef} // 👉 指定 ref
+            onClick={() => setShowProfile(true)}
+            className="border border-2 rounded-sm px-4 py-2 text-black hover:!bg-[#FFFFD0] hover:!border-black"
+          >
+            會員中心
+          </button>
         )}
       </div>
 
-      {/* 登入頁提醒 */}
-      {isSigninPage && (
-        <h2 className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold text-black">
-          
-        </h2>
-      )}
-
       {/* 會員中心 Modal */}
       {showProfile && (
-        <UserProfileModal onClose={() => setShowProfile(false)} />
+        <UserProfileModal
+          onClose={() => setShowProfile(false)}
+          buttonRef={buttonRef} // 👉 傳入 buttonRef
+        />
       )}
     </header>
   );
