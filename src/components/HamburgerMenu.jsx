@@ -31,12 +31,13 @@ export default function HamburgerMenu() {
       </button>
 
       {/* 側邊選單 */}
-      <div
-        className={`fixed top-15 left-0 h-[calc(100%-6rem)] w-64 bg-[#2B5659] text-white z-40 transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <ul className="flex flex-col p-6 space-y-6 pt-35">
+     <div
+  className={`fixed top-15 left-0 h-screen w-64 max-sm:w-full bg-[#2B5659] text-white z-40 transition-transform duration-300 ${
+    open ? 'translate-x-0' : '-translate-x-full'
+  }`}
+>
+        <ul className="flex flex-col p-6 space-y-6 pt-35 text-left max-sm:items-center max-sm:text-center">
+
           <li>
             <Link
               to="/calendar"
